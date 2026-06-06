@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Igreja Apostólica Tenda dos Profetas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --azul: #1a3fa3;
+      --azul-escuro: #0e2570;
+      --azul-claro: #2d5ce8;
+      --laranja: #d04a00;
+      --laranja-claro: #f05c10;
+      --branco: #f7f4f0;
+      --preto-suave: #111827;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--preto-suave);
+      color: var(--branco);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 48px;
+      background: rgba(10, 18, 50, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 12px; }
+    .nav-logo img {
+      width: 46px; height: 46px; object-fit: contain;
+      border-radius: 6px; background: white; padding: 3px;
+    }
+    .nav-logo span {
+      font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700;
+      color: white; line-height: 1.2; max-width: 160px;
+    }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a {
+      color: rgba(255,255,255,0.75); text-decoration: none;
+      font-size: 13px; font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--laranja-claro); }
+    .hamburger {
+      display: none; background: none; border: none;
+      cursor: pointer; flex-direction: column; gap: 5px;
+    }
+    .hamburger span { display: block; width: 24px; height: 2px; background: white; border-radius: 2px; }
+
+    /* ── HERO ── */
+    #inicio { position: relative; height: 100vh; overflow: hidden; padding: 0; }
+    .carousel { display: flex; height: 100%; transition: transform 0.8s cubic-bezier(0.77,0,0.175,1); }
+    .slide { min-width: 100%; height: 100%; position: relative; display: flex; align-items: center; justify-content: center; }
+    .slide-bg { position: absolute; inset: 0; background-size: cover; background-position: center; }
+    .slide-bg::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg,rgba(10,18,80,0.85) 0%,rgba(10,18,50,0.55) 60%,rgba(180,50,0,0.25) 100%);
+    }
+    .slide-1 .slide-bg { background: linear-gradient(135deg,#0e2570 0%,#1a3fa3 40%,#d04a00 100%); }
+    .slide-2 .slide-bg { background: linear-gradient(135deg,#0a1540 0%,#1a3fa3 50%,#8b2e00 100%); }
+    .slide-3 .slide-bg { background: linear-gradient(135deg,#0e1a60 0%,#2d5ce8 50%,#d04a00 100%); }
+    .slide-4 .slide-bg { background: linear-gradient(135deg,#071030 0%,#1a3fa3 45%,#c04000 100%); }
+    /* Para usar fotos reais, substitua as linhas acima por:
+       .slide-1 .slide-bg { background-image: url('fotos/culto1.jpg'); }
+    */
+    .slide-content { position: relative; z-index: 2; text-align: center; padding: 24px; }
+    .slide-label {
+      font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--laranja-claro); font-weight: 500; margin-bottom: 16px;
+    }
+    .slide-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(36px, 7vw, 80px); font-weight: 900;
+      line-height: 1.05; color: white; margin-bottom: 20px;
+    }
+    .slide-title em { font-style: italic; color: var(--laranja-claro); }
+    .slide-verse { font-size: 16px; color: rgba(255,255,255,0.7); max-width: 520px; margin: 0 auto 32px; line-height: 1.6; }
+    .btn-primary {
+      display: inline-block; background: var(--laranja); color: white;
+      padding: 14px 36px; border-radius: 4px; font-weight: 600;
+      font-size: 14px; text-decoration: none; letter-spacing: 0.05em;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { background: var(--laranja-claro); transform: translateY(-2px); }
+    .carousel-dots {
+      position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 10px; z-index: 10;
+    }
+    .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(255,255,255,0.35); cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .dot.active { background: var(--laranja-claro); transform: scale(1.3); }
+    .carousel-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%); z-index: 10;
+      background: rgba(255,255,255,0.12); border: none; color: white;
+      width: 46px; height: 46px; border-radius: 50%; font-size: 20px;
+      cursor: pointer; transition: background 0.2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .carousel-arrow:hover { background: rgba(255,255,255,0.25); }
+    .carousel-arrow.prev { left: 24px; }
+    .carousel-arrow.next { right: 24px; }
+
+    /* ── GERAL ── */
+    section { padding: 96px 48px; }
+    .section-label {
+      font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--laranja-claro); font-weight: 600; margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 4vw, 50px); font-weight: 700;
+      line-height: 1.15; margin-bottom: 20px;
+    }
+    .divider { width: 48px; height: 3px; background: var(--laranja); margin-bottom: 28px; }
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    /* ── HISTÓRIA ── */
+    #historia { background: #0d1636; }
+    .historia-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+    .historia-texto p { color: rgba(255,255,255,0.68); line-height: 1.8; font-size: 15px; margin-bottom: 16px; }
+    .historia-img .logo-grande {
+      width: 100%; max-width: 320px; display: block; margin: 0 auto;
+      background: white; padding: 24px; border-radius: 8px;
+    }
+    .historia-destaque {
+      background: var(--azul-escuro); border-left: 3px solid var(--laranja);
+      padding: 20px 24px; margin-top: 28px; border-radius: 0 6px 6px 0;
+    }
+    .historia-destaque p {
+      font-family: 'Playfair Display', serif; font-style: italic;
+      font-size: 17px; color: rgba(255,255,255,0.9); line-height: 1.6;
+    }
+
+    /* ── AGENDA ── */
+    #agenda { background: var(--preto-suave); }
+    .agenda-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin-top: 40px; }
+    .agenda-card {
+      background: #0d1636; border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 8px; padding: 28px 24px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .agenda-card:hover { transform: translateY(-4px); border-color: var(--laranja); }
+    .agenda-dia { font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--laranja-claro); font-weight: 600; margin-bottom: 8px; }
+    .agenda-evento { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+    .agenda-horario { font-size: 13px; color: rgba(255,255,255,0.5); }
+    .agenda-horario span { display: inline-block; background: rgba(255,255,255,0.07); padding: 3px 10px; border-radius: 20px; margin-top: 6px; }
+
+    /* ── MINISTÉRIOS ── */
+    #ministerios { background: #0d1636; }
+    .ministerios-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 40px; }
+    .ministerio-card {
+      background: var(--preto-suave); border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 8px; padding: 28px 20px; text-align: center;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .ministerio-card:hover { transform: translateY(-4px); border-color: var(--azul-claro); }
+    .ministerio-icone { font-size: 36px; margin-bottom: 14px; }
+    .ministerio-nome { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .ministerio-desc { font-size: 12px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+
+    /* ── GALERIA ── */
+    #galeria { background: var(--preto-suave); }
+    .galeria-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      grid-auto-rows: 200px; gap: 8px; margin-top: 40px;
+    }
+    .galeria-item { border-radius: 6px; overflow: hidden; position: relative; background: #0d1636; }
+    .galeria-item:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+    .galeria-item:nth-child(5) { grid-column: span 2; }
+    .galeria-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .galeria-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; color: rgba(255,255,255,0.25); text-align: center; padding: 16px;
+      background: linear-gradient(135deg,rgba(26,63,163,0.4) 0%,rgba(10,18,80,0.6) 100%);
+      flex-direction: column; gap: 6px;
+    }
+    .galeria-aviso { text-align: center; margin-top: 20px; font-size: 12px; color: rgba(255,255,255,0.3); }
+
+    /* ── VÍDEOS ── */
+    #videos { background: #060d24; }
+    .videos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-top: 40px; }
+    .video-card { border-radius: 8px; overflow: hidden; background: #0d1636; border: 1px solid rgba(255,255,255,0.07); }
+    .video-card iframe { width: 100%; height: 200px; border: none; display: block; }
+    .video-info { padding: 16px; }
+    .video-titulo { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .video-data { font-size: 12px; color: rgba(255,255,255,0.4); }
+    /* PARA ADICIONAR VÍDEO: copie o bloco .video-card e cole o embed do YouTube no iframe src */
+
+    /* ── CONTATO ── */
+    #contato { background: #0d1636; }
+    .contato-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+    .contato-item { display: flex; gap: 16px; margin-bottom: 28px; }
+    .contato-icone {
+      width: 44px; height: 44px; background: var(--azul-escuro); border-radius: 6px;
+      display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;
+    }
+    .contato-detalhe h4 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--laranja-claro); margin-bottom: 4px; font-weight: 600; }
+    .contato-detalhe p { font-size: 15px; color: rgba(255,255,255,0.75); line-height: 1.5; }
+    .mapa-wrapper { border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+    .mapa-wrapper iframe { width: 100%; height: 340px; border: none; display: block; }
+
+    /* ── RODAPÉ ── */
+    footer {
+      background: #060d24; padding: 36px 48px;
+      text-align: center; border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    footer p { font-size: 13px; color: rgba(255,255,255,0.3); }
+    .footer-logo { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.6); margin-bottom: 8px !important; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      nav { padding: 14px 20px; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      section { padding: 72px 20px; }
+      .historia-grid, .contato-grid { grid-template-columns: 1fr; gap: 32px; }
+      .galeria-grid { grid-template-columns: 1fr 1fr; grid-auto-rows: 140px; }
+      .galeria-item:nth-child(1), .galeria-item:nth-child(5) { grid-column: span 1; grid-row: span 1; }
+      .carousel-arrow { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <img src="logo.jpeg" alt="Logo Tenda dos Profetas" />
+    <span>Tenda dos<br>Profetas</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#inicio">Início</a></li>
+    <li><a href="#historia">Nossa História</a></li>
+    <li><a href="#agenda">Agenda</a></li>
+    <li><a href="#ministerios">Ministérios</a></li>
+    <li><a href="#galeria">Galeria</a></li>
+    <li><a href="#videos">Cultos</a></li>
+    <li><a href="#contato">Contato</a></li>
+  </ul>
+  <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section id="inicio" style="padding:0;">
+  <div class="carousel" id="carousel">
+
+    <div class="slide slide-1">
+      <div class="slide-bg"></div>
+      <div class="slide-content">
+        <p class="slide-label">Igreja Apostólica</p>
+        <h1 class="slide-title">Tenda dos<br><em>Profetas</em></h1>
+        <p class="slide-verse">"Porque a minha casa será chamada casa de oração para todos os povos." — Isaías 56:7</p>
+        <a href="#historia" class="btn-primary">Conheça-nos</a>
+      </div>
+    </div>
+
+    <div class="slide slide-2">
+      <div class="slide-bg"></div>
+      <div class="slide-content">
+        <p class="slide-label">Venha nos visitar</p>
+        <h1 class="slide-title">Uma Igreja<br><em>Viva</em></h1>
+        <p class="slide-verse">"Onde dois ou três se reunirem em meu nome, ali estou no meio deles." — Mateus 18:20</p>
+        <a href="#agenda" class="btn-primary">Ver Agenda</a>
+      </div>
+    </div>
+
+    <div class="slide slide-3">
+      <div class="slide-bg"></div>
+      <div class="slide-content">
+        <p class="slide-label">Todos os domingos</p>
+        <h1 class="slide-title">Culto de<br><em>Adoração</em></h1>
+        <p class="slide-verse">"Entrai pelas suas portas com gratidão e nos seus átrios com louvor." — Salmos 100:4</p>
+        <a href="#galeria" class="btn-primary">Ver Fotos</a>
+      </div>
+    </div>
+
+    <div class="slide slide-4">
+      <div class="slide-bg"></div>
+      <div class="slide-content">
+        <p class="slide-label">Participe conosco</p>
+        <h1 class="slide-title">Sua Família<br><em>Espiritual</em></h1>
+        <p class="slide-verse">"Como é bom e agradável viverem os irmãos em unidade!" — Salmos 133:1</p>
+        <a href="#contato" class="btn-primary">Como Chegar</a>
+      </div>
+    </div>
+
+  </div>
+  <button class="carousel-arrow prev" onclick="moveCarousel(-1)">&#8592;</button>
+  <button class="carousel-arrow next" onclick="moveCarousel(1)">&#8594;</button>
+  <div class="carousel-dots">
+    <div class="dot active" onclick="goToSlide(0)"></div>
+    <div class="dot" onclick="goToSlide(1)"></div>
+    <div class="dot" onclick="goToSlide(2)"></div>
+    <div class="dot" onclick="goToSlide(3)"></div>
+  </div>
+</section>
+
+<!-- NOSSA HISTÓRIA -->
+<section id="historia">
+  <div class="container">
+    <div class="historia-grid">
+      <div class="historia-texto">
+        <p class="section-label">Nossa História</p>
+        <h2 class="section-title">Uma comunidade<br>fundada na fé</h2>
+        <div class="divider"></div>
+        <p>A Igreja Apostólica Tenda dos Profetas nasceu do desejo de ver uma comunidade sólida, fundamentada na Palavra de Deus e no amor fraternal, servindo a Deus e ao próximo no bairro Ricardo de Albuquerque, no Rio de Janeiro.</p>
+        <p>Ao longo dos anos, crescemos como família — não apenas em número, mas em fé, em caráter e em serviço. Cada culto, cada oração partilhada, cada vida transformada é uma pedra viva nessa obra que Deus construiu.</p>
+        <p>Somos uma igreja apostólica, comprometida com o ensino bíblico, o evangelismo e o cuidado com as pessoas. Aqui, todo mundo é bem-vindo.</p>
+        <div class="historia-destaque">
+          <p>"O leão rugiu, quem não temerá? O Senhor Deus falou, quem não profetizará?" — Amós 3:8</p>
+        </div>
+      </div>
+      <div class="historia-img">
+        <img class="logo-grande" src="logo.jpeg" alt="Logo Igreja Tenda dos Profetas" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AGENDA -->
+<section id="agenda">
+  <div class="container">
+    <p class="section-label">Programação</p>
+    <h2 class="section-title">Agenda da Igreja</h2>
+    <div class="divider"></div>
+    <div class="agenda-grid">
+      <div class="agenda-card">
+        <p class="agenda-dia">Domingo</p>
+        <h3 class="agenda-evento">Culto de Adoração</h3>
+        <p class="agenda-horario">Culto principal da semana — Palavra, louvor e comunhão.<br>
+          <span>🕙 10h00 &nbsp;|&nbsp; 🌙 19h00</span>
+        </p>
+      </div>
+      <div class="agenda-card">
+        <p class="agenda-dia">Quarta-feira</p>
+        <h3 class="agenda-evento">Estudo Bíblico</h3>
+        <p class="agenda-horario">Mergulhe na Palavra com ensinamentos profundos e práticos.<br>
+          <span>🕕 19h30</span>
+        </p>
+      </div>
+      <div class="agenda-card">
+        <p class="agenda-dia">Sexta-feira</p>
+        <h3 class="agenda-evento">Culto de Oração</h3>
+        <p class="agenda-horario">Noite de intercessão e busca à presença de Deus.<br>
+          <span>🕗 19h30</span>
+        </p>
+      </div>
+      <div class="agenda-card">
+        <p class="agenda-dia">Sábado</p>
+        <h3 class="agenda-evento">Reunião de Jovens</h3>
+        <p class="agenda-horario">Encontro especial para a juventude — louvor, Palavra e comunhão.<br>
+          <span>🕓 16h00</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MINISTÉRIOS -->
+<section id="ministerios">
+  <div class="container">
+    <p class="section-label">Áreas de Serviço</p>
+    <h2 class="section-title">Nossos Ministérios</h2>
+    <div class="divider"></div>
+    <div class="ministerios-grid">
+      <div class="ministerio-card">
+        <div class="ministerio-icone">🎵</div>
+        <h3 class="ministerio-nome">Louvor e Adoração</h3>
+        <p class="ministerio-desc">Músicos e vocalistas que conduzem a congregação à presença de Deus.</p>
+      </div>
+      <div class="ministerio-card">
+        <div class="ministerio-icone">📖</div>
+        <h3 class="ministerio-nome">Escola Bíblica</h3>
+        <p class="ministerio-desc">Ensino sistemático da Bíblia para todas as idades e estágios de fé.</p>
+      </div>
+      <div class="ministerio-card">
+        <div class="ministerio-icone">🌱</div>
+        <h3 class="ministerio-nome">Jovens</h3>
+        <p class="ministerio-desc">Espaço de formação e comunhão para a nova geração da igreja.</p>
+      </div>
+      <div class="ministerio-card">
+        <div class="ministerio-icone">🤲</div>
+        <h3 class="ministerio-nome">Intercessão</h3>
+        <p class="ministerio-desc">Guerreiros de oração que intercede pela igreja e pela cidade.</p>
+      </div>
+      <div class="ministerio-card">
+        <div class="ministerio-icone">👨‍👩‍👧‍👦</div>
+        <h3 class="ministerio-nome">Família</h3>
+        <p class="ministerio-desc">Cuidado e orientação para casais, pais e filhos na fé.</p>
+      </div>
+      <div class="ministerio-card">
+        <div class="ministerio-icone">🕊️</div>
+        <h3 class="ministerio-nome">Evangelismo</h3>
+        <p class="ministerio-desc">Levando o Evangelho às ruas e comunidades ao redor.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALERIA -->
+<section id="galeria">
+  <div class="container">
+    <p class="section-label">Memórias</p>
+    <h2 class="section-title">Galeria de Fotos</h2>
+    <div class="divider"></div>
+    <div class="galeria-grid">
+      <!-- Para adicionar fotos: substitua a .galeria-placeholder por <img src="fotos/nome.jpg" alt="..."> -->
+      <div class="galeria-item">
+        <div class="galeria-placeholder">📸<br>Adicione sua foto<br><small style="opacity:0.5">(culto1.jpg)</small></div>
+      </div>
+      <div class="galeria-item">
+        <div class="galeria-placeholder">📸<br>Foto do culto<br><small style="opacity:0.5">(culto2.jpg)</small></div>
+      </div>
+      <div class="galeria-item">
+        <div class="galeria-placeholder">📸<br><small style="opacity:0.5">(foto3.jpg)</small></div>
+      </div>
+      <div class="galeria-item">
+        <div class="galeria-placeholder">📸<br><small style="opacity:0.5">(foto4.jpg)</small></div>
+      </div>
+      <div class="galeria-item">
+        <div class="galeria-placeholder">📸<br>Foto destaque<br><small style="opacity:0.5">(foto5.jpg)</small></div>
+      </div>
+      <div class="galeria-item">
+        <div class="galeria-placeholder">📸<br><small style="opacity:0.5">(foto6.jpg)</small></div>
+      </div>
+    </div>
+    <p class="galeria-aviso">Para adicionar fotos: coloque os arquivos na pasta <code>fotos/</code> e substitua os placeholders por &lt;img src="fotos/nome.jpg"&gt;</p>
+  </div>
+</section>
+
+<!-- CULTOS EM VÍDEO -->
+<section id="videos">
+  <div class="container">
+    <p class="section-label">Assista online</p>
+    <h2 class="section-title">Cultos em Vídeo</h2>
+    <div class="divider"></div>
+    <div class="videos-grid">
+
+      <!-- ======================================================
+           COMO ADICIONAR NOVO CULTO:
+           1. Copie o bloco abaixo (de <div class="video-card"> até </div>)
+           2. No YouTube, clique em Compartilhar > Incorporar
+           3. Copie o código do iframe e cole no src abaixo
+           4. Atualize o título e a data
+           ====================================================== -->
+
+      <div class="video-card">
+        <!-- Cole o src do YouTube aqui: src="https://www.youtube.com/embed/SEU_ID_AQUI" -->
+        <div style="width:100%;height:200px;background:#0d1636;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.25);font-size:13px;text-align:center;padding:16px;">
+          ▶️<br>Cole aqui o embed<br>do YouTube
+        </div>
+        <div class="video-info">
+          <p class="video-titulo">Culto de Adoração</p>
+          <p class="video-data">Atualize com a data do culto</p>
+        </div>
+      </div>
+
+      <div class="video-card">
+        <div style="width:100%;height:200px;background:#0d1636;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.25);font-size:13px;text-align:center;padding:16px;">
+          ▶️<br>Cole aqui o embed<br>do YouTube
+        </div>
+        <div class="video-info">
+          <p class="video-titulo">Estudo Bíblico</p>
+          <p class="video-data">Atualize com a data</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CONTATO -->
+<section id="contato">
+  <div class="container">
+    <p class="section-label">Venha nos visitar</p>
+    <h2 class="section-title">Contato &amp; Localização</h2>
+    <div class="divider"></div>
+    <div class="contato-grid">
+      <div class="contato-info">
+
+        <div class="contato-item">
+          <div class="contato-icone">📍</div>
+          <div class="contato-detalhe">
+            <h4>Endereço</h4>
+            <p>Rua Lobo, 292<br>Ricardo de Albuquerque<br>Rio de Janeiro – RJ</p>
+          </div>
+        </div>
+
+        <div class="contato-item">
+          <div class="contato-icone">📅</div>
+          <div class="contato-detalhe">
+            <h4>Horários dos Cultos</h4>
+            <p>Dom 10h e 19h &nbsp;·&nbsp; Qua 19h30<br>Sex 19h30 &nbsp;·&nbsp; Sáb 16h (Jovens)</p>
+          </div>
+        </div>
+
+        <div class="contato-item">
+          <div class="contato-icone">📱</div>
+          <div class="contato-detalhe">
+            <h4>WhatsApp</h4>
+            <!-- Substitua 5521000000000 pelo número real com DDD -->
+            <p><a href="https://wa.me/5521000000000" style="color:var(--laranja-claro);text-decoration:none;">(21) 00000-0000</a></p>
+            <p style="font-size:12px;color:rgba(255,255,255,0.35);margin-top:2px;">Atualize com o número da igreja</p>
+          </div>
+        </div>
+
+        <div class="contato-item">
+          <div class="contato-icone">✉️</div>
+          <div class="contato-detalhe">
+            <h4>E-mail</h4>
+            <p><a href="mailto:contato@tendadosprofetas.com.br" style="color:var(--laranja-claro);text-decoration:none;">contato@tendadosprofetas.com.br</a></p>
+          </div>
+        </div>
+
+      </div>
+
+      <div>
+        <div class="mapa-wrapper">
+          <!-- Mapa apontado para Rua Lobo, 292 - Ricardo de Albuquerque - Rio de Janeiro -->
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3675.2!2d-43.3410!3d-22.8636!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9be01eadfe0f3f%3A0x14f10fd3f2082a9!2sRua+Lobo%2C+292%2C+Ricardo+de+Albuquerque%2C+Rio+de+Janeiro+-+RJ!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr"
+            allowfullscreen=""
+            loading="lazy"
+            title="Localização Igreja Tenda dos Profetas"
+          ></iframe>
+        </div>
+        <p style="margin-top:12px;font-size:12px;color:rgba(255,255,255,0.35);text-align:center;">
+          Rua Lobo, 292 · Ricardo de Albuquerque · Rio de Janeiro
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RODAPÉ -->
+<footer>
+  <p class="footer-logo">Igreja Apostólica Tenda dos Profetas</p>
+  <p>Rua Lobo, 292 — Ricardo de Albuquerque — Rio de Janeiro, RJ</p>
+  <p style="margin-top:8px;">© 2025 &nbsp;·&nbsp; Desenvolvido com fé e cuidado &nbsp;·&nbsp; WallTech Informática</p>
+</footer>
+
+<script>
+  // Carrossel automático
+  let current = 0;
+  const totalSlides = 4;
+  const dots = document.querySelectorAll('.dot');
+
+  function updateCarousel() {
+    document.getElementById('carousel').style.transform = 'translateX(-' + (current * 100) + '%)';
+    dots.forEach(function(d, i) { d.classList.toggle('active', i === current); });
+  }
+
+  function moveCarousel(dir) {
+    current = (current + dir + totalSlides) % totalSlides;
+    updateCarousel();
+    resetTimer();
+  }
+
+  function goToSlide(n) {
+    current = n;
+    updateCarousel();
+    resetTimer();
+  }
+
+  var timer = setInterval(function() { moveCarousel(1); }, 5000);
+  function resetTimer() {
+    clearInterval(timer);
+    timer = setInterval(function() { moveCarousel(1); }, 5000);
+  }
+
+  // Menu mobile
+  var menuOpen = false;
+  function toggleMenu() {
+    var links = document.querySelector('.nav-links');
+    menuOpen = !menuOpen;
+    if (menuOpen) {
+      links.style.cssText = 'display:flex;flex-direction:column;position:fixed;top:72px;left:0;right:0;background:rgba(10,18,50,0.97);padding:24px;gap:20px;z-index:998;';
+    } else {
+      links.style.cssText = 'display:none;';
+    }
+  }
+
+  // Fecha menu ao clicar em link
+  document.querySelectorAll('.nav-links a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      if (menuOpen) toggleMenu();
+    });
+  });
+</script>
+
+</body>
+</html>
